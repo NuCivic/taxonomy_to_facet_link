@@ -43,7 +43,7 @@ function taxonomy_to_facet_link_field_formatter_view($entity_type, $entity, $fie
         if (isset($display['settings']['link_only']) && $display['settings']['link_only']) {
           $element[$delta] = array(
             '#type' => 'item',
-            '#markup' => _taxonomy_to_facet_link_create_solr_search_url($term->tid, $field['field_name'], $display['settings']['search_path'], $display['settings']['facetapi_searcher']),
+            '#markup' => '/' . _taxonomy_to_facet_link_create_solr_search_url($term->tid, $field['field_name'], $display['settings']['search_path'], $display['settings']['facetapi_searcher']),
           );
         }
         else {
@@ -112,7 +112,7 @@ function taxonomy_to_facet_link_field_formatter_settings_form($field, $instance,
     '#title' => t('Link Only'),
     '#description' => t('Povide a link without the term.'),
     '#default_value' => $settings['link_only'],
-    '#required' => TRUE,
+    '#required' => FALSE,
   );
   $form['target'] = array(
     '#type' => 'select',
