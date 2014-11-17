@@ -18,6 +18,7 @@ function taxonomy_to_facet_link_field_formatter_info() {
       'settings' => array(
         'facetapi_searcher' => 'facetapi_searcher',
         'search_path' => 'search',
+        'link_only' => FALSE,
         'target' => '_self',
       ),
     ),
@@ -39,14 +40,22 @@ function taxonomy_to_facet_link_field_formatter_view($entity_type, $entity, $fie
         if (module_exists('i18n_taxonomy') && function_exists('i18n_taxonomy_term_name')) {
           $name = i18n_taxonomy_term_name($term, $entity->language);
         }
-        $element[$delta] = array(
-          '#type' => 'link',
-          '#title' => $name,
-          '#href' => _taxonomy_to_facet_link_create_solr_search_url($term->tid, $field['field_name'], $display['settings']['search_path'], $display['settings']['facetapi_searcher']),
-          '#attributes' => array(
-            'target' => $display['settings']['target'],
-          ),
-        );
+        if (isset($display['settings']['link_only']) && $display['settings']['link_only']) {
+          $element[$delta] = array(
+            '#type' => 'item',
+            '#markup' => _taxonomy_to_facet_link_create_solr_search_url($term->tid, $field['field_name'], $display['settings']['search_path'], $display['settings']['facetapi_searcher']),
+          );
+        }
+        else {
+          $element[$delta] = array(
+            '#type' => 'link',
+            '#title' => $name,
+            '#href' => _taxonomy_to_facet_link_create_solr_search_url($term->tid, $field['field_name'], $display['settings']['search_path'], $display['settings']['facetapi_searcher']),
+            '#attributes' => array(
+              'target' => $display['settings']['target'],
+            ),
+          );
+        }
       }
       break;
   }
@@ -95,7 +104,14 @@ function taxonomy_to_facet_link_field_formatter_settings_form($field, $instance,
     '#type' => 'textfield',
     '#title' => t('Search path'),
     '#description' => t('Url to your search path without trailing slash. Example: http://mysite.com/solr or /search. <br/> You can edit the suggested default value at !link', array('!link' => l(t('Module administration'), 'admin/config/search/taxonomy-to-facet-link'))),
-    '#default_value' => $settings['path']['search_path'],
+    '#default_value' => $settings['search_path'],
+    '#required' => TRUE,
+  );
+  $form['link_only'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Link Only'),
+    '#description' => t('Povide a link without the term.'),
+    '#default_value' => $settings['link_only'],
     '#required' => TRUE,
   );
   $form['target'] = array(
@@ -135,10 +151,11 @@ function taxonomy_to_facet_link_field_formatter_settings_summary($field, $instan
   $summary_vars = array(
     '@search_path' => $settings['search_path'],
     '@searcher' => $settings['facetapi_searcher'],
+    '@link_only' => $settings['link_only'],
     '@target' => $settings['target'],
   );
 
-  $summary = t('Path: @search_path Target: @target Searcher: @searcher', $summary_vars);
+  $summary = t('Path: @search_path Target: @target Searcher: @searcher, Link Only: @link_only', $summary_vars);
   return $summary;
 
   // Generate an example url by fetching a term from the vocabulary of this
