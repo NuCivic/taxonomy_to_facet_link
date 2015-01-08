@@ -93,28 +93,28 @@ function taxonomy_to_facet_link_field_formatter_settings_form($field, $instance,
   foreach ($searchers as $searcher => $info) {
     $active_searchers[$searcher] = $info['label'];
   }
-  $form['facetapi_searcher'] = array(
+  $element['facetapi_searcher'] = array(
     '#type' => 'select',
     '#title' => t('Searcher'),
     '#description' => t('Select the searcher you will be using to link to.'),
     '#options' => $active_searchers,
     "#default_value" => $settings['facetapi_searcher'],
   );
-  $form['search_path'] = array(
+  $element['search_path'] = array(
     '#type' => 'textfield',
     '#title' => t('Search path'),
     '#description' => t('Url to your search path without trailing slash. Example: http://mysite.com/solr or /search. <br/> You can edit the suggested default value at !link', array('!link' => l(t('Module administration'), 'admin/config/search/taxonomy-to-facet-link'))),
     '#default_value' => $settings['search_path'],
     '#required' => TRUE,
   );
-  $form['link_only'] = array(
+  $element['link_only'] = array(
     '#type' => 'checkbox',
     '#title' => t('Link Only'),
     '#description' => t('Povide a link without the term.'),
     '#default_value' => $settings['link_only'],
     '#required' => FALSE,
   );
-  $form['target'] = array(
+  $element['target'] = array(
     '#type' => 'select',
     '#title' => "Link target",
     "#description" => t('Select the target of the taxonomy link'),
@@ -122,7 +122,7 @@ function taxonomy_to_facet_link_field_formatter_settings_form($field, $instance,
     "#default_value" => $settings['target'],
   );
 
-  return $form;
+  return $element;
 }
 
 /**
